@@ -1,0 +1,68 @@
+{
+  "name": "codex-quota-monitor",
+  "displayName": "Codex 额度监控",
+  "description": "通过本机 Codex App Server 显示账户额度、重置时间和读取状态。",
+  "version": "0.1.6",
+  "publisher": "sugimoto-local",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "extensionKind": ["ui"],
+  "main": "./src/extension.js",
+  "activationEvents": ["onStartupFinished", "onView:codexQuota.view"],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codexQuota",
+          "title": "Codex 额度",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "codexQuota": [
+        {
+          "id": "codexQuota.view",
+          "name": "额度概览",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      { "command": "codexQuota.show", "title": "Codex 额度：打开面板" },
+      { "command": "codexQuota.refresh", "title": "Codex 额度：立即刷新", "icon": "$(refresh)" },
+      { "command": "codexQuota.openUsage", "title": "Codex 额度：打开官方额度页面", "icon": "$(link-external)" }
+    ],
+    "menus": {
+      "view/title": [
+        { "command": "codexQuota.refresh", "when": "view == codexQuota.view", "group": "navigation" },
+        { "command": "codexQuota.openUsage", "when": "view == codexQuota.view", "group": "navigation" }
+      ]
+    },
+    "configuration": {
+      "title": "Codex 额度监控",
+      "properties": {
+        "codexQuota.refreshMinutes": {
+          "type": "number",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 60,
+          "description": "自动刷新间隔（分钟）；每次读取完成后关闭 Codex App Server。"
+        },
+        "codexQuota.codexExecutable": {
+          "type": "string",
+          "default": "",
+          "description": "可选：Codex 可执行文件的绝对路径。留空时优先使用已安装的官方 VS Code Codex 扩展内的可执行文件。Windows 请指定 codex.exe。"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "check": "node --check src/extension.js && node --check src/appServerClient.js && node --check src/model.js && node --check media/view.js",
+    "test": "node --test test/*.test.js"
+  }
+}
